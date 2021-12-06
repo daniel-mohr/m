@@ -41,8 +41,8 @@ pylint_debian:
     - date
     - apt-get update
     - $APT_GET_INSTALL pylint3 python3-recommonmark python3-pytest python3-netcdf4
-    - name: install dependencies (cfchecker via pip)
-      run: pip3 install cfchecker
+    # install dependencies (cfchecker via pip)
+    - pip3 install cfchecker
     - pylint --version
     - pylint -j 3 --include-naming-hint=y --good-names=i,j,k,fd $(find -name "*.py")
     - echo -e "\nskipped files:"
