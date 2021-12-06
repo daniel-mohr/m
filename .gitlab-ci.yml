@@ -10,6 +10,8 @@ stages:
 
 pre-commit_alpine:
   stage: pre
+  rules:
+    - if: false
   image:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
@@ -41,7 +43,7 @@ pylint_debian:
   script:
     - date
     - apt-get update
-    - $APT_GET_INSTALL libudunits2-0 pylint3 python3-jsonschema python3-netcdf4 python3-pip python3-recommonmark
+    - $APT_GET_INSTALL libudunits2-0 pylint3 python3-jsonschema python3-netcdf4 python3-pip python3-pytest python3-pytest-cov python3-pytest-xdist python3-recommonmark
     # install dependencies (cfchecker via pip)
     - pip3 install cfchecker
     # run pylint
@@ -81,6 +83,9 @@ build_pages:
       - document_pdf.svg
       - pages.svg
       - public
+
+ubuntu-2004_test_doc:
+  stage: test
 
 pages:
   stage: deploy
