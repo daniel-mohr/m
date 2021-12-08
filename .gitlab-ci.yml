@@ -84,9 +84,6 @@ build_pages:
       - pages.svg
       - public
 
-ubuntu-2004_test_doc:
-  stage: test
-
 pages:
   stage: deploy
   image:
