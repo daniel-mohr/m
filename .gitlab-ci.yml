@@ -4,8 +4,7 @@ variables:
 
 stages:
   - pre
-  - build
-  - test
+  - build_test
   - deploy
 
 pre-commit_alpine:
@@ -25,6 +24,8 @@ pre-commit_alpine:
 
 pycodestyle_alpine:
   stage: pre
+  rules:
+    - if: $false
   image:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
@@ -37,6 +38,8 @@ pycodestyle_alpine:
 
 pylint_debian:
   stage: pre
+  rules:
+    - if: $false
   image:
     # https://hub.docker.com/_/debian
     name: debian:latest
@@ -48,13 +51,13 @@ pylint_debian:
     - pip3 install cfchecker
     # run pylint
     - pylint --version
-    - pylint --reports=n --disable=all --enable=similarities $(find -name "*.py") || echo $?
+    - pylint --reports=n --disable=all --enable=similarities $(find -name "*.py") || echo "exit status: $?"
     - pylint $(find -name "*.py")
     - echo -e "\nskipped files:"
     - echo -e "$(grep -irl skip-file *)"
 
 build_pages:
-  stage: build
+  stage: build_test
   image:
     # https://hub.docker.com/_/debian
     name: debian:latest
@@ -62,7 +65,7 @@ build_pages:
     - date
     - apt-get update
     # get and install necessary packages:
-    - $APT_GET_INSTALL python3-setuptools python3-wheel python3-jsonschema python3-netcdf4 libudunits2-0 python3-sphinx python3-sphinx-argparse python3-recommonmark latexmk texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python3-pip python3-pytest python3-pytest-cov python3-pytest-xdist
+    - $APT_GET_INSTALL python3-setuptools python3-wheel python3-jsonschema python3-netcdf4 libudunits2-0 make python3-sphinx python3-sphinx-argparse python3-recommonmark latexmk texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python3-pip python3-pytest python3-pytest-cov python3-pytest-xdist
     # install pydabu
     - pip3 install cfchecker sphinx-jsonschema
     - env python3 setup.py check_modules
@@ -70,8 +73,8 @@ build_pages:
     # build
     - ./create_doc
     # create data for pages:
-    - mv riaf.html public
-    - mv riaf.pdf public/
+    - mv manual_pydabu_html public
+    - mv manual_pydabu.pdf public/
     # create badges, which could be used in gitlab:
     # see https://github.com/jongracecox/anybadge for available colors
     - pip3 install anybadge
@@ -84,6 +87,41 @@ build_pages:
       - document_pdf.svg
       - pages.svg
       - public
+
+ubuntu-2004_test_doc:
+  stage: build_test
+  image:
+    # https://hub.docker.com/_/ubuntu
+    name: ubuntu:20.04
+  script:
+    - date
+    - apt-get update
+    # get and install necessary packages:
+    - $APT_GET_INSTALL libudunits2-0 python3-jsonschema python3-netcdf4 python3-pip python3-setuptools python3-wheel
+    # install dependencies (cfchecker via pip)
+    - pip3 install cfchecker
+    # check all modules available
+    - env python3 setup.py check_modules
+    # install pydabu
+    - pip3 install .
+    # run pydabu
+    - which pydabu
+    - pydabu
+    # run json_schema_from_schema_org
+    - which json_schema_from_schema_org
+    - json_schema_from_schema_org -h
+    # unittest
+    - env python3 setup.py run_unittest
+    # install dependencies for pytest (ubuntu packages)
+    - $APT_GET_INSTALL python3-pytest python3-pytest-cov python3-pytest-xdist
+    # pytest
+    - env python3 setup.py run_pytest --parallel --coverage
+    # install dependencies for documentation (ubuntu packages)
+    - $APT_GET_INSTALL latexmk make python3-recommonmark python3-sphinx python3-sphinx-argparse rsync texlive-fonts-recommended texlive-latex-extra texlive-latex-recommended
+    # install dependencies for documentation (sphinx-jsonschema via pip)
+    - pip3 install sphinx-jsonschema
+    # build doc
+    - ./create_doc
 
 pages:
   stage: deploy
