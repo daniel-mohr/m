@@ -51,7 +51,7 @@ pylint_debian:
     - pip3 install cfchecker
     # run pylint
     - pylint --version
-    - pylint --reports=n --disable=all --enable=similarities $(find -name "*.py") || echo "exit status: "$?
+    - pylint --reports=n --disable=all --enable=similarities $(find -name "*.py") || echo "exit status:"$?
     - pylint $(find -name "*.py")
     - echo -e "\nskipped files:"
     - echo -e "$(grep -irl skip-file *)"
