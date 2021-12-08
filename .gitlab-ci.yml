@@ -11,7 +11,7 @@ stages:
 pre-commit_alpine:
   stage: pre
   rules:
-    - if: false
+    - if: $false
   image:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
