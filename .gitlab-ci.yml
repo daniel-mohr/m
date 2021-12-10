@@ -163,7 +163,7 @@ i386_debian_latest_test:
     # https://hub.docker.com/_/debian
     name: i386/debian:latest
   script:
-    - tests/docker_test_scripts/do_test_i386\:debian\:latest
+    - tests/docker_test_scripts/do_test_i386-debian-latest
 
 opensuse_leap_153_test:
   stage: build_test
@@ -171,7 +171,7 @@ opensuse_leap_153_test:
     # https://hub.docker.com/r/opensuse/leap
     name: opensuse/leap:15.3
   script:
-    - tests/docker_test_scripts/do_test_opensuse_leap\:15.3
+    - tests/docker_test_scripts/do_test_opensuse_leap-15.3
 
 pages:
   stage: deploy
