@@ -9,8 +9,6 @@ stages:
 
 pre-commit_alpine:
   stage: pre
-  rules:
-    - if: $false
   image:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
@@ -24,8 +22,6 @@ pre-commit_alpine:
 
 pycodestyle_alpine:
   stage: pre
-  rules:
-    - if: $false
   image:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
@@ -38,8 +34,6 @@ pycodestyle_alpine:
 
 pylint_debian:
   stage: pre
-  rules:
-    - if: $false
   image:
     # https://hub.docker.com/_/debian
     name: debian:latest
@@ -58,8 +52,6 @@ pylint_debian:
 
 build_pages:
   stage: build_test
-  rules:
-    - if: $false
   image:
     # https://hub.docker.com/_/debian
     name: debian:latest
@@ -94,8 +86,6 @@ build_pages:
 
 ubuntu-1804_test_doc:
   stage: build_test
-  rules:
-    - if: $false
   image:
     # https://hub.docker.com/_/ubuntu
     name: ubuntu:18.04
@@ -134,8 +124,6 @@ ubuntu-1804_test_doc:
 
 ubuntu-2004_test_doc:
   stage: build_test
-  rules:
-    - if: $false
   image:
     # https://hub.docker.com/_/ubuntu
     name: ubuntu:20.04
@@ -175,7 +163,7 @@ pages:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
   rules:
-    - if: $false
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   dependencies:
     - build_pages
   script:
@@ -188,9 +176,11 @@ pages:
       - public
 
 deploy_to_github:
-  stage: deploy
   rules:
     - if: $false
+  stage: deploy
+  #rules:
+  #  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   image:
     # https://hub.docker.com/_/alpine
     name: alpine:latest
